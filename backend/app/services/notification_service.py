@@ -2,7 +2,7 @@
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from typing import Iterable, Optional
+from typing import Iterable
 
 from app.config import settings
 
@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 def smtp_configured() -> bool:
-    return bool(settings.SMTP_HOST and settings.SMTP_USER and settings.SMTP_FROM_EMAIL)
+    return settings.is_smtp_configured
 
 
 def send_email_notification(to_email: str | Iterable[str], subject: str, body: str, html: bool = True) -> bool:
@@ -20,17 +20,23 @@ def send_email_notification(to_email: str | Iterable[str], subject: str, body: s
     if not smtp_configured():
         logger.info("[Notification] SMTP not configured. Skipped email to %s: %s", recipients, subject)
         return False
+    host = settings.resolved_smtp_host
+    port = settings.SMTP_PORT
+    user = settings.resolved_smtp_user
+    password = settings.resolved_smtp_password
+    from_email = settings.resolved_smtp_from_email
     try:
         msg = MIMEMultipart()
-        msg["From"] = settings.SMTP_FROM_EMAIL
+        msg["From"] = from_email
         msg["To"] = ", ".join(recipients)
         msg["Subject"] = subject
         msg.attach(MIMEText(body, "html" if html else "plain", "utf-8"))
-        with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT, timeout=10) as server:
+        with smtplib.SMTP(host, port, timeout=12) as server:
             server.starttls()
-            if settings.SMTP_PASSWORD:
-                server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
+            if password:
+                server.login(user, password)
             server.send_message(msg)
+        logger.info("[Notification] Successfully delivered email to %s via %s:%s", recipients, host, port)
         return True
     except Exception as e:
         logger.warning("[Notification] Failed to send email to %s: %s", recipients, e)

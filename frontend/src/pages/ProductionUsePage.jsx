@@ -93,13 +93,13 @@ export default function ProductionUsePage() {
         <div className="cd"><span className="ic r"><ShieldAlert size={26}/></span><div><small>Blocked</small><b className="r">{blockedCount.toLocaleString()}</b></div></div>
       </section>
 
-      <div className="pn border-blue-200 bg-blue-50/20">
+      <div className="pn border border-blue-200 bg-blue-50/25 p-5 shadow-sm" style={{ overflow: 'visible' }}>
         <h2><span>Live Production Usage Gate Evaluation</span><span className="text-xs text-blue-700 font-semibold">Backend deterministic validation</span></h2>
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 mt-3 items-end">
-          <div><label className="block text-xs font-semibold text-slate-700 mb-1">Target Instrument</label><select className="fi w-full" value={selectedAssetId} onChange={e=>setSelectedAssetId(e.target.value)}>{assets.map(a => <option key={a.id} value={a.id}>{a.asset_code} — {a.asset_name} ({a.calibration_status})</option>)}</select></div>
-          <div><label className="block text-xs font-semibold text-slate-700 mb-1">Production Line</label><input className="fi w-full" value={productionLine} onChange={e=>setProductionLine(e.target.value)} placeholder="Line 1" /></div>
-          <div><label className="block text-xs font-semibold text-slate-700 mb-1">Batch / Lot</label><input className="fi w-full" value={batchLot} onChange={e=>setBatchLot(e.target.value)} placeholder="Optional reference" /></div>
-          <div className="flex gap-2"><button className="btn o flex-1" onClick={dryRun} disabled={validating || !selectedAssetId}>{validating?'Evaluating...':'Dry Run Check'}</button><button className="btn flex-1" onClick={recordUse} disabled={recording || !selectedAssetId}>{recording?'Recording...':'Record Use'}</button></div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3.5 mt-3.5 items-end">
+          <div><label className="block text-xs font-semibold text-slate-700 mb-1">Target Instrument *</label><select className="fi w-full" value={selectedAssetId} onChange={e=>setSelectedAssetId(e.target.value)}>{assets.map(a => <option key={a.id} value={a.id}>{a.asset_code} — {a.asset_name} ({a.calibration_status})</option>)}</select></div>
+          <div><label className="block text-xs font-semibold text-slate-700 mb-1">Production Line *</label><input className="fi w-full" value={productionLine} onChange={e=>setProductionLine(e.target.value)} placeholder="Line 1" /></div>
+          <div><label className="block text-xs font-semibold text-slate-700 mb-1">Batch / Lot Reference</label><input className="fi w-full" value={batchLot} onChange={e=>setBatchLot(e.target.value)} placeholder="Optional reference" /></div>
+          <div className="flex gap-2 w-full"><button className="btn o flex-1 h-[44px] justify-center" onClick={dryRun} disabled={validating || !selectedAssetId}>{validating?'Evaluating...':'Dry Run Check'}</button><button className="btn flex-1 h-[44px] justify-center" onClick={recordUse} disabled={recording || !selectedAssetId}>{recording?'Recording...':'Record Use'}</button></div>
         </div>
 
         {validationResult && (
@@ -118,7 +118,7 @@ export default function ProductionUsePage() {
         )}
       </div>
 
-      <div className="tb">
+      <div className="tb mt-2">
         <input className="fi" placeholder="Search usage, asset, reason..." value={search} onChange={e=>setSearch(e.target.value)} />
         <select className="fi" value={decisionFilter} onChange={e=>setDecisionFilter(e.target.value)}>
           <option value="">All decisions</option>

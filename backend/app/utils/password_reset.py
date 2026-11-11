@@ -10,9 +10,26 @@ from app.utils.date_utils import utcnow
 
 logger = logging.getLogger(__name__)
 
-# In-memory token store fallback
+# In-memory token store fallback for environments where table is not yet migrated
 # Format: token_hash -> {user_id, expires_at, used}
 _RESET_STORE: dict[str, dict] = {}
+_TABLE_EXISTS_CACHE: dict[int, bool] = {}
+
+
+def _has_db_table(db: Optional[Session]) -> bool:
+    if db is None:
+        return False
+    try:
+        bind = db.get_bind()
+        bind_id = id(bind)
+        if bind_id in _TABLE_EXISTS_CACHE:
+            return _TABLE_EXISTS_CACHE[bind_id]
+        from sqlalchemy import inspect
+        exists = bool(inspect(bind).has_table("password_reset_tokens"))
+        _TABLE_EXISTS_CACHE[bind_id] = exists
+        return exists
+    except Exception:
+        return False
 
 
 def generate_reset_token() -> str:
@@ -40,7 +57,7 @@ def store_reset_token(
         "used": False,
     }
 
-    if db is not None:
+    if db is not None and _has_db_table(db):
         try:
             from app.models.password_reset import PasswordResetToken
             db_token = PasswordResetToken(
@@ -54,13 +71,17 @@ def store_reset_token(
             db.add(db_token)
             db.flush()
         except Exception as e:
+            try:
+                db.rollback()
+            except Exception:
+                pass
             logger.warning("Could not persist password reset token in database: %s", e)
 
 
 def consume_reset_token(token: str, db: Optional[Session] = None) -> Optional[int]:
     token_hashed = hash_token(token)
 
-    if db is not None:
+    if db is not None and _has_db_table(db):
         try:
             from app.models.password_reset import PasswordResetToken
             row = (
@@ -91,6 +112,10 @@ def consume_reset_token(token: str, db: Optional[Session] = None) -> Optional[in
                     _RESET_STORE[token_hashed]["used"] = True
                 return int(row.user_id)
         except Exception as e:
+            try:
+                db.rollback()
+            except Exception:
+                pass
             logger.warning("Database token lookup failed, falling back to memory: %s", e)
 
     # Fallback to memory store
@@ -113,7 +138,7 @@ def invalidate_user_tokens(user_id: int, db: Optional[Session] = None) -> None:
         if item.get("user_id") == user_id:
             item["used"] = True
 
-    if db is not None:
+    if db is not None and _has_db_table(db):
         try:
             from app.models.password_reset import PasswordResetToken
             tokens = db.query(PasswordResetToken).filter(
@@ -124,4 +149,8 @@ def invalidate_user_tokens(user_id: int, db: Optional[Session] = None) -> None:
                 t.is_used = True
             db.flush()
         except Exception as e:
+            try:
+                db.rollback()
+            except Exception:
+                pass
             logger.warning("Could not invalidate database tokens: %s", e)

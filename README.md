@@ -109,75 +109,110 @@ python backend/scripts/validate_data.py --data-dir data
 
 ---
 
-## 5. Getting Started
+## 5. Getting Started & Two-Terminal Startup Procedure
 
 ### 5.1 Prerequisites
 - Python 3.11+
 - Node.js 18+ & npm
 - MySQL 8.0+ or 9.x running locally
 
-### 5.2 Backend Setup
-```bash
-# Navigate to backend directory
-cd. Getting Started
-5.1 Prerequisites
-Python 3.11+
-Node.js 18+ & npm
-MySQL 8.0+ or 9.x running locally
-5.2 Run the Application Locally (Windows PowerShell)
-The frontend and backend must both be running at the same time. Use two separate PowerShell terminals. Start the frontend in Terminal 1, then start the backend in Terminal 2. Keep both terminals open while using CalibraFlow.
+### 5.2 Run the Application Locally (Windows PowerShell — Two Separate Terminals)
+
+The frontend and backend must both be running simultaneously. Use two separate PowerShell terminal windows. Keep both terminals open while using CalibraFlow.
+
 Open both terminals in the project root:
-C:\CandidateWorkspace\CalibraFlow — Instrument Calibration & Compliance Management System
-Terminal 1 — Start the frontend first
-# Run this from the project root (not from inside the frontend folder)
+`C:\CandidateWorkspace\CalibraFlow — Instrument Calibration & Compliance Management System`
+
+#### Terminal 1 — Frontend Development Server (React + Vite)
+```powershell
+# Run this from the project root (not from inside the frontend folder):
 Set-Location .\frontend
 
-# Install dependencies (first setup, or after dependency changes)
+# Install dependencies (first setup, or after dependency changes):
 npm install
 
-# Start the Vite development server
+# Start the Vite development server:
 npm run dev -- --host 127.0.0.1
-Vite normally displays http://127.0.0.1:5173/. If port 5173 is already occupied, Vite may select another port (for example, 5174). Open the exact frontend URL printed in this terminal.
-Terminal 2 — Start the backend
-Open a second PowerShell terminal. Make sure it starts in the project root, then run:
-# Run this from the project root
+
+# IMPORTANT: If your terminal prompt is ALREADY inside the 'frontend' directory:
+# Do NOT run 'Set-Location .\frontend' again; simply run:
+npm run dev -- --host 127.0.0.1
+```
+*Frontend Application*: **`http://127.0.0.1:5173`** (or `http://127.0.0.1:5174` if port 5173 is occupied). Always open the exact frontend URL printed in the Vite console!
+
+#### Terminal 2 — Backend API Server (FastAPI + Uvicorn)
+```powershell
+# Open a second PowerShell terminal in the project root, then run:
 Set-Location .\backend
 
-# Create the virtual environment only if it does not already exist
+# Create virtual environment if it does not already exist:
 python -m venv .venv
 
-# Activate the virtual environment
+# Activate virtual environment:
 .\.venv\Scripts\Activate.ps1
 
-# Install backend dependencies
+# Install backend dependencies:
 pip install -r requirements.txt
 
-# Start the FastAPI backend
+# Start the FastAPI backend:
 python -m uvicorn app.app_main:app --host 127.0.0.1 --port 8000 --reload
-If PowerShell blocks virtual-environment activation, use the environment's Python directly instead:
+
+# If PowerShell script execution blocks virtual-environment activation:
 .\.venv\Scripts\python.exe -m uvicorn app.app_main:app --host 127.0.0.1 --port 8000 --reload
-Open CalibraFlow
-Once both servers are running, open the frontend URL printed by Vite in your browser.
-Frontend application: usually http://127.0.0.1:5173/ (use the actual Vite URL if it selects another port).
-Backend API: http://127.0.0.1:8000
-Backend API documentation: http://127.0.0.1:8000/docs
-Backend health endpoint: http://127.0.0.1:8000/health
-The backend URL is for the API and documentation; it is not the frontend website. Keep both terminal processes running. To stop either server, press Ctrl+C in its terminal.
-Important: Run Set-Location .\frontend only when your current directory is the project root. If your prompt already ends in \frontend, do not run that command again; simply run npm run dev -- --host 127.0.0.1.
 
-### 5.3 Frontend Setup
-```bash
-# Navigate to frontend directory
-cd frontend
+# Alternatively, from the project root without changing directories:
+python -m uvicorn app.app_main:app --app-dir backend --host 127.0.0.1 --port 8000 --reload
+```
+*Backend API Docs (Swagger UI)*: **`http://127.0.0.1:8000/docs`**  
+*Backend Health Check*: **`http://127.0.0.1:8000/health`**  
+*Canonical Entry Point*: `app.app_main:app` (file: `backend/app/app_main.py`)
 
-# Install dependencies
-npm install
+> [!IMPORTANT]
+> Both Terminal 1 and Terminal 2 must remain running. The user interacts with the application exclusively through the **Frontend URL (`http://127.0.0.1:5173`)** in their browser. Vite automatically proxies `/api` requests to `http://127.0.0.1:8000`. If the backend terminal is closed, Vite displays `ECONNREFUSED` proxy errors.
 
-# Start Vite development server
-npm run dev
+### 5.3 Environment & SMTP Setup
+
+The backend configuration is managed via `backend/.env`. A sanitised template is provided in `backend/.env.example`:
+
+```env
+# Database
+DATABASE_URL=mysql+pymysql://<DB_USER>:<DB_PASSWORD>@localhost:3306/calibraflow?charset=utf8mb4
+
+# Security / JWT
+SECRET_KEY=your_secure_random_key_here
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=1440
+
+# SMTP Configuration for Password Recovery
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your_email@gmail.com
+SMTP_PASSWORD=your_app_password
+SMTP_FROM_EMAIL=your_email@gmail.com
 ```
 
-Open your browser at `http://127.0.0.1:5173`.
+The application automatically supports both standard SMTP variable names (`SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_FROM_EMAIL`) and provider aliases (`SMTP_SERVER`, `SENDER_EMAIL`, `SENDER_PASSWORD`).
+
+### 5.4 Database Migration Safety
+
+- **Authoritative Database**: MySQL (`calibraflow`). Never drop tables, reset the database, or delete historical business records.
+- **Pending Migrations**: Migration `b2c3d4e5f6a7` (`password_reset_tokens`) is prepared in `backend/alembic/versions/`. The backend gracefully falls back to memory token storage if the table is not yet migrated, ensuring zero downtime and complete non-destructive operation.
+- **Migration Command**: To apply migrations to the live database (requires verified backup first):
+  ```powershell
+  cd backend
+  python -m alembic upgrade head
+  ```
+
+### 5.5 Troubleshooting Common Issues
+
+1. **`connect ECONNREFUSED 127.0.0.1:8000`**:
+   The backend FastAPI server is not running or crashed. Open Terminal 2 and start `python -m uvicorn app.app_main:app --app-dir backend --host 127.0.0.1 --port 8000`.
+2. **`Set-Location : Cannot find path ... frontend\frontend`**:
+   Your terminal was already inside the `frontend` directory. Run `npm run dev -- --host 127.0.0.1` directly without `cd frontend`.
+3. **`Unable to process request` on Forgot Password**:
+   Verify that Terminal 2 is running and that your SMTP credentials in `backend/.env` are valid. If SMTP is not configured, the token is generated and logged safely without crashing.
+4. **`Invalid Date` in history timelines**:
+   Ensure you are running the latest frontend build containing `formatDateSafe` fallbacks.
 
 ---
 

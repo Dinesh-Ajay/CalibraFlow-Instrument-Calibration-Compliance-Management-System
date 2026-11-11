@@ -16,7 +16,11 @@ export default function ForgotPasswordPage() {
       const res = await api.post('/auth/forgot-password', { email: email.trim() });
       setMessage(res.data?.message || 'If the email is registered, a password recovery message has been sent.');
     } catch (err) {
-      setError(err.response?.data?.detail || 'Unable to process request.');
+      if (!err.response) {
+        setError('Cannot connect to backend service. Please ensure the backend is running at http://127.0.0.1:8000.');
+      } else {
+        setError(err.response.data?.detail || 'Unable to process request. Please verify your email.');
+      }
     } finally { setSubmitting(false); }
   };
 

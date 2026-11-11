@@ -212,7 +212,7 @@ const WorkflowBoardPage = () => {
                 onClick={() => navigate('/work-orders')}
               >
                 <b>{wo.work_order_code}</b>
-                <small>Asset #{wo.asset_id} · downtime {Math.round((wo.planned_downtime_minutes ?? wo.downtime_minutes ?? 120) / 60)} h</small>
+                <small>{wo.asset_code || `Asset #${wo.asset_id}`} · downtime {Math.max(1, Math.round(Number(wo.planned_downtime_minutes || wo.downtime_minutes || 120) / 60))} h</small>
                 <span className="tg g">{wo.status}</span>
               </div>
             ))

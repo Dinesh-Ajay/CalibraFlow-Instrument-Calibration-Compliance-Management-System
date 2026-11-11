@@ -143,8 +143,8 @@ export default function InstrumentsPage() {
         {(search || typeFilter || statusFilter) && <button className="btn o" onClick={()=>{setSearch(''); setTypeFilter(''); setStatusFilter('');}}>Clear</button>}
       </div>
 
-      <div className="pn">
-        <table>
+      <div className="pn" style={{ overflowX: 'auto' }}>
+        <table style={{ minWidth: 720 }}>
           <thead><tr><th>Asset</th><th>Name</th><th>Type</th><th>Production line</th><th>Last calibrated</th><th>Next due</th><th>Status</th></tr></thead>
           <tbody>
             {filteredAssets.length > 0 ? filteredAssets.map(asset => (
@@ -163,7 +163,7 @@ export default function InstrumentsPage() {
       </div>
 
       {selectedAsset && (
-        <div className="pn">
+        <div className="pn mb-8">
           <h2>Service history ({selectedAsset.asset_code} · {selectedAsset.instrument_type_name || selectedAsset.asset_name}) <span>{selectedAsset.calibration_status}</span></h2>
           <div className="tl">
             {assetEvents.length > 0 ? assetEvents.map((evt) => (

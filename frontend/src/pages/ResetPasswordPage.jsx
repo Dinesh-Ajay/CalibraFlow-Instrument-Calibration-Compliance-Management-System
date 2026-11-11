@@ -16,15 +16,20 @@ export default function ResetPasswordPage() {
   const onSubmit = async (e) => {
     e.preventDefault();
     setError(''); setMessage('');
+    if (!token.trim()) return setError('Recovery token is required.');
     if (newPassword.length < 8) return setError('New password must be at least 8 characters.');
     if (newPassword !== confirm) return setError('Passwords do not match.');
     setSubmitting(true);
     try {
       const res = await api.post('/auth/reset-password', { token: token.trim(), new_password: newPassword });
-      setMessage(res.data?.message || 'Password reset successfully.');
-      setTimeout(()=>navigate('/login'), 1200);
+      setMessage(res.data?.message || 'Password reset successfully. Redirecting to sign in...');
+      setTimeout(()=>navigate('/login'), 1500);
     } catch (err) {
-      setError(err.response?.data?.detail || 'Unable to reset password.');
+      if (!err.response) {
+        setError('Cannot connect to backend service. Please ensure the backend is running at http://127.0.0.1:8000.');
+      } else {
+        setError(err.response.data?.detail || 'Invalid or expired recovery token.');
+      }
     } finally { setSubmitting(false); }
   };
 
