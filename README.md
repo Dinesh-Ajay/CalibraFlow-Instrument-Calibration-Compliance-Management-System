@@ -119,29 +119,51 @@ python backend/scripts/validate_data.py --data-dir data
 ### 5.2 Backend Setup
 ```bash
 # Navigate to backend directory
-cd backend
+cd. Getting Started
+5.1 Prerequisites
+Python 3.11+
+Node.js 18+ & npm
+MySQL 8.0+ or 9.x running locally
+5.2 Run the Application Locally (Windows PowerShell)
+The frontend and backend must both be running at the same time. Use two separate PowerShell terminals. Start the frontend in Terminal 1, then start the backend in Terminal 2. Keep both terminals open while using CalibraFlow.
+Open both terminals in the project root:
+C:\CandidateWorkspace\CalibraFlow — Instrument Calibration & Compliance Management System
+Terminal 1 — Start the frontend first
+# Run this from the project root (not from inside the frontend folder)
+Set-Location .\frontend
 
-# Create virtual environment (optional but recommended)
+# Install dependencies (first setup, or after dependency changes)
+npm install
+
+# Start the Vite development server
+npm run dev -- --host 127.0.0.1
+Vite normally displays http://127.0.0.1:5173/. If port 5173 is already occupied, Vite may select another port (for example, 5174). Open the exact frontend URL printed in this terminal.
+Terminal 2 — Start the backend
+Open a second PowerShell terminal. Make sure it starts in the project root, then run:
+# Run this from the project root
+Set-Location .\backend
+
+# Create the virtual environment only if it does not already exist
 python -m venv .venv
-# Windows: .venv\Scripts\activate
-# Linux/macOS: source .venv/bin/activate
 
-# Install dependencies
+# Activate the virtual environment
+.\.venv\Scripts\Activate.ps1
+
+# Install backend dependencies
 pip install -r requirements.txt
 
-# Configure environment (.env)
-# DATABASE_URL=mysql+pymysql://root:root@localhost:3306/calibraflow
-# JWT_SECRET=calibraflow_super_secret_jwt_key_2026
-
-# Seed database with starter industrial dataset and demo accounts
-python scripts/seed_database.py
-
-# Run automated tests (17 unit and integration tests)
-pytest tests -v
-
-# Start FastAPI server
-uvicorn app.app_main:app --host 127.0.0.1 --port 8000 --reload
-```
+# Start the FastAPI backend
+python -m uvicorn app.app_main:app --host 127.0.0.1 --port 8000 --reload
+If PowerShell blocks virtual-environment activation, use the environment's Python directly instead:
+.\.venv\Scripts\python.exe -m uvicorn app.app_main:app --host 127.0.0.1 --port 8000 --reload
+Open CalibraFlow
+Once both servers are running, open the frontend URL printed by Vite in your browser.
+Frontend application: usually http://127.0.0.1:5173/ (use the actual Vite URL if it selects another port).
+Backend API: http://127.0.0.1:8000
+Backend API documentation: http://127.0.0.1:8000/docs
+Backend health endpoint: http://127.0.0.1:8000/health
+The backend URL is for the API and documentation; it is not the frontend website. Keep both terminal processes running. To stop either server, press Ctrl+C in its terminal.
+Important: Run Set-Location .\frontend only when your current directory is the project root. If your prompt already ends in \frontend, do not run that command again; simply run npm run dev -- --host 127.0.0.1.
 
 ### 5.3 Frontend Setup
 ```bash
