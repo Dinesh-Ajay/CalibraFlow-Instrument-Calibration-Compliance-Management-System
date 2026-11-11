@@ -49,7 +49,7 @@ async def upload_certificate_endpoint(
 @router.get("", response_model=List[CertificateOut])
 def list_certificates(
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_roles(["Administrator", "Quality Engineer", "Maintenance Engineer", "admin", "quality_eng", "maint_eng"])),
     asset_id: Optional[int] = None,
     verification_status: Optional[str] = None,
     limit: int = Query(default=100, ge=1, le=1000),
@@ -71,7 +71,11 @@ def list_certificates(
 
 
 @router.get("/{certificate_id}", response_model=CertificateOut)
-def get_certificate(certificate_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def get_certificate(
+    certificate_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_roles(["Administrator", "Quality Engineer", "Maintenance Engineer", "admin", "quality_eng", "maint_eng"])),
+):
     cert = db.query(Certificate).filter(Certificate.id == certificate_id).first()
     if not cert:
         raise HTTPException(status_code=404, detail="Certificate not found")
@@ -100,7 +104,11 @@ def verify_certificate_endpoint(
 
 
 @router.get("/{certificate_id}/download")
-def download_certificate_file(certificate_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def download_certificate_file(
+    certificate_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_roles(["Administrator", "Quality Engineer", "Maintenance Engineer", "admin", "quality_eng", "maint_eng"])),
+):
     cert = db.query(Certificate).filter(Certificate.id == certificate_id).first()
     if not cert:
         raise HTTPException(status_code=404, detail="Certificate not found")

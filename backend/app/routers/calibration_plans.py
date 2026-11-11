@@ -29,7 +29,7 @@ def _to_out(plan: CalibrationPlan) -> CalibrationPlanOut:
 @router.get("", response_model=List[CalibrationPlanOut])
 def list_calibration_plans(
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_roles(["Administrator", "Quality Engineer", "Maintenance Engineer", "Production Planner", "admin", "quality_eng", "maint_eng", "planner"])),
     asset_id: Optional[int] = None,
     instrument_type_id: Optional[int] = None,
 ):

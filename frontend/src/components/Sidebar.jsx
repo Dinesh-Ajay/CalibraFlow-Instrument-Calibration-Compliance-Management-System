@@ -1,15 +1,11 @@
 ﻿import React, { useMemo, useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-import {
-  LayoutDashboard, Kanban, Gauge, CalendarDays, FileCheck2, Wrench, Factory,
-  BellRing, History, ShieldCheck, Users, KeyRound, Boxes
-} from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { getPermittedNavItems } from '../config/navigation';
 
 const Sidebar = () => {
-  const { hasRole } = useAuth();
+  const { roles } = useAuth();
   const [syncTime, setSyncTime] = useState('Just now');
-  const isAdmin = hasRole(['Administrator', 'admin']);
 
   useEffect(() => {
     const updateSync = () => {
@@ -22,27 +18,8 @@ const Sidebar = () => {
   }, []);
 
   const navItems = useMemo(() => {
-    const items = [
-      { to: '/', label: 'Dashboard', icon: LayoutDashboard },
-      { to: '/workflow-board', label: 'Workflow board', icon: Kanban },
-      { to: '/instruments', label: 'Instruments', icon: Gauge },
-      { to: '/plans-events', label: 'Plans and events', icon: CalendarDays },
-      { to: '/certificates', label: 'Certificates', icon: FileCheck2 },
-      { to: '/work-orders', label: 'Work orders', icon: Wrench },
-      { to: '/production-use', label: 'Production use', icon: Factory },
-      { to: '/alerts', label: 'Alerts', icon: BellRing },
-      { to: '/audit', label: 'Audit trail', icon: History },
-      { to: '/data-quality', label: 'Data quality', icon: ShieldCheck },
-    ];
-    if (isAdmin) {
-      items.push(
-        { to: '/admin/users', label: 'User management', icon: Users },
-        { to: '/admin/roles', label: 'Roles & permissions', icon: KeyRound },
-        { to: '/admin/instrument-types', label: 'Instrument types', icon: Boxes },
-      );
-    }
-    return items;
-  }, [isAdmin]);
+    return getPermittedNavItems(roles);
+  }, [roles]);
 
   return (
     <aside className="sb">

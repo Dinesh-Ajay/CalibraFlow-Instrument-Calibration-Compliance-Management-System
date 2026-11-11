@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
 import StatusBadge from '../components/StatusBadge';
+import { useAuth } from '../context/AuthContext';
 import { Upload, Download, Check, X } from 'lucide-react';
 
 export default function CertificatesPage() {
+  const { hasRole } = useAuth();
+  const canVerifyCertificates = hasRole(['Administrator', 'admin', 'Quality Engineer', 'quality_eng']);
   const [certificates, setCertificates] = useState([]);
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -58,7 +61,7 @@ export default function CertificatesPage() {
     else if (expired) { check = 'Expired'; cls=''; }
     else if (c.verification_status === 'PENDING') { check = 'Pending QA'; cls='y'; }
     else if (c.verification_status === 'VERIFIED') { check = 'Valid'; cls='g'; }
-    return { ...c, check, cls, canVerify: c.verification_status === 'PENDING' };
+    return { ...c, check, cls, canVerify: canVerifyCertificates && c.verification_status === 'PENDING' };
   }).filter(r => {
     const q = search.toLowerCase();
     const ms = !q || [r.certificate_code,r.certificate_number,r.asset_code,r.calibration_event_id].some(v=>String(v||'').toLowerCase().includes(q));

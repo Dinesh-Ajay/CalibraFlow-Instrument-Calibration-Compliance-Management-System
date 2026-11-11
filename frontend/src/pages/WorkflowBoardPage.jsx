@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import StatusBadge from '../components/StatusBadge';
+import { useAuth } from '../context/AuthContext';
 import { Plus, Download, Wrench, AlertTriangle, ShieldCheck, Clock, FileBadge, X } from 'lucide-react';
 
 const WorkflowBoardPage = () => {
   const navigate = useNavigate();
+  const { hasRole } = useAuth();
+  const canCreateWo = hasRole(['Administrator', 'admin', 'Maintenance Engineer', 'maint_eng', 'Production Planner', 'planner']);
   const [loading, setLoading] = useState(true);
   const [boardData, setBoardData] = useState({
     dueSoon: [],
@@ -162,10 +165,12 @@ const WorkflowBoardPage = () => {
           <p>Every move is written to the immutable audit trail</p>
         </div>
         <div className="tb">
-          <button className="btn" onClick={() => setShowNewWoModal(true)}>
-            <Plus size={18} />
-            <span>New work order</span>
-          </button>
+          {canCreateWo && (
+            <button className="btn" onClick={() => setShowNewWoModal(true)}>
+              <Plus size={18} />
+              <span>New work order</span>
+            </button>
+          )}
           <button className="btn o" onClick={handleExport}>
             <Download size={18} />
             <span>Export</span>

@@ -1,9 +1,13 @@
 ﻿import React, { useEffect, useState } from 'react';
 import api from '../services/api';
 import StatusBadge from '../components/StatusBadge';
+import { useAuth } from '../context/AuthContext';
 import { Plus, Download, Play, CheckSquare, X } from 'lucide-react';
 
 export default function WorkOrdersPage() {
+  const { hasRole } = useAuth();
+  const canExecute = hasRole(['Administrator', 'admin', 'Maintenance Engineer', 'maint_eng']);
+  const canCreate = hasRole(['Administrator', 'admin', 'Maintenance Engineer', 'maint_eng', 'Production Planner', 'planner']);
   const [workOrders, setWorkOrders] = useState([]);
   const [assets, setAssets] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -50,12 +54,14 @@ export default function WorkOrdersPage() {
   return (
     <>
       <div className="bc">Home / Work orders</div>
-      <header className="hd"><div><h1>Work orders</h1><p>Calibration and maintenance work orders with scheduling and downtime tracking.</p></div><div className="tb"><button className="btn" onClick={()=>setShowCreateModal(true)} disabled={!assets.length}><Plus size={18}/><span>New work order</span></button><button className="btn o" onClick={exportCsv}><Download size={18}/><span>Export</span></button></div></header>
+      <header className="hd"><div><h1>Work orders</h1><p>Calibration and maintenance work orders with scheduling and downtime tracking.</p></div><div className="tb">{canCreate && <button className="btn" onClick={()=>setShowCreateModal(true)} disabled={!assets.length}><Plus size={18}/><span>New work order</span></button>}<button className="btn o" onClick={exportCsv}><Download size={18}/><span>Export</span></button></div></header>
       <div className="tb"><input className="fi" placeholder="Search work order, asset..." value={search} onChange={e=>setSearch(e.target.value)} /><select className="fi" value={statusFilter} onChange={e=>setStatusFilter(e.target.value)}><option>All statuses</option><option>Open</option><option>In progress</option><option>Closed</option></select></div>
       <div className="pn" style={{ overflowX: 'auto' }}><table style={{ minWidth: 720 }}><thead><tr><th>Work order</th><th>Asset</th><th>Type</th><th>Status</th><th>Scheduled</th><th>Downtime (min)</th><th>Description</th><th>Actions</th></tr></thead><tbody>
         {filtered.length ? filtered.map(w => (
           <tr key={w.id}><td>{w.work_order_code}</td><td>{w.asset_code || w.asset_id}</td><td>{w.work_order_type}</td><td><StatusBadge status={w.status} /></td><td>{w.scheduled_date ? new Date(w.scheduled_date).toLocaleString() : '—'}</td><td>{w.downtime_minutes ?? 0}</td><td style={{whiteSpace:'normal'}}>{w.description || '—'}</td><td>
-            <div className="flex gap-1.5">{!['IN_PROGRESS','COMPLETED','CLOSED','CANCELLED'].includes(w.status) && <button className="btn sm o" onClick={()=>handleStart(w.id)}><Play size={13}/> Start</button>}{w.status==='IN_PROGRESS' && <button className="btn sm" onClick={()=>{setSelectedWo(w); setActualDowntime(w.downtime_minutes||60); setShowCompleteModal(true);}}><CheckSquare size={13}/> Complete</button>}</div>
+            {canExecute ? (
+              <div className="flex gap-1.5">{!['IN_PROGRESS','COMPLETED','CLOSED','CANCELLED'].includes(w.status) && <button className="btn sm o" onClick={()=>handleStart(w.id)}><Play size={13}/> Start</button>}{w.status==='IN_PROGRESS' && <button className="btn sm" onClick={()=>{setSelectedWo(w); setActualDowntime(w.downtime_minutes||60); setShowCompleteModal(true);}}><CheckSquare size={13}/> Complete</button>}</div>
+            ) : <span className="text-xs text-slate-400">View only</span>}
           </td></tr>
         )) : <tr><td colSpan="8" className="text-center py-8 text-slate-500">No work orders found.</td></tr>}
       </tbody></table></div>

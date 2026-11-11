@@ -63,9 +63,28 @@ def rec(name, role, exp, got, note=''):
 rec('admin list users','Administrator','2xx', client.get('/api/v1/users',headers=h(admin)).status_code)
 for role,tok in [('Operator',op),('Maintenance Engineer',maint),('Quality Engineer',qual),('Production Planner',plan)]:
     rec('list users denied',role,403, client.get('/api/v1/users',headers=h(tok)).status_code)
+    rec('permissions matrix denied',role,403, client.get('/api/v1/users/permissions/matrix',headers=h(tok)).status_code)
 rec('operator cannot record calibration','Operator',403, client.post('/api/v1/calibration/events',headers=h(op),json={}).status_code)
 rec('planner cannot record calibration','Production Planner',403, client.post('/api/v1/calibration/events',headers=h(plan),json={}).status_code)
 rec('operator cannot create work order','Operator',403, client.post('/api/v1/work-orders',headers=h(op),json={}).status_code)
+rec('operator cannot access work orders','Operator',403, client.get('/api/v1/work-orders',headers=h(op)).status_code)
+rec('operator cannot access calibration plans','Operator',403, client.get('/api/v1/calibration-plans',headers=h(op)).status_code)
+rec('operator cannot access certificates','Operator',403, client.get('/api/v1/certificates',headers=h(op)).status_code)
+rec('planner cannot access certificates','Production Planner',403, client.get('/api/v1/certificates',headers=h(plan)).status_code)
+
+# Audit Trail RBAC (Admin & Quality only; Maint, Operator, Planner denied)
+rec('admin can view audit trail','Administrator','2xx', client.get('/api/v1/audit',headers=h(admin)).status_code)
+rec('quality eng can view audit trail','Quality Engineer','2xx', client.get('/api/v1/audit',headers=h(qual)).status_code)
+rec('maint eng cannot view audit trail','Maintenance Engineer',403, client.get('/api/v1/audit',headers=h(maint)).status_code)
+rec('operator cannot view audit trail','Operator',403, client.get('/api/v1/audit',headers=h(op)).status_code)
+rec('planner cannot view audit trail','Production Planner',403, client.get('/api/v1/audit',headers=h(plan)).status_code)
+
+# Data Quality RBAC (Admin & Quality only; Maint, Operator, Planner denied)
+rec('admin can view data quality','Administrator','2xx', client.get('/api/v1/data-quality/report',headers=h(admin)).status_code)
+rec('quality eng can view data quality','Quality Engineer','2xx', client.get('/api/v1/data-quality/report',headers=h(qual)).status_code)
+rec('maint eng cannot view data quality','Maintenance Engineer',403, client.get('/api/v1/data-quality/report',headers=h(maint)).status_code)
+rec('operator cannot view data quality','Operator',403, client.get('/api/v1/data-quality/report',headers=h(op)).status_code)
+rec('planner cannot view data quality','Production Planner',403, client.get('/api/v1/data-quality/report',headers=h(plan)).status_code)
 
 # create baseline asset for workflows
 it_id = client.get('/api/v1/instrument-types',headers=h(admin)).json()[0]['id']

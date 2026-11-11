@@ -5,7 +5,8 @@ import { useAuth } from '../context/AuthContext';
 import { Plus, Download, CheckCircle2, XCircle, X, CalendarCheck } from 'lucide-react';
 
 export default function PlansAndEventsPage() {
-  const { user } = useAuth();
+  const { user, hasRole } = useAuth();
+  const canManagePlansAndEvents = hasRole(['Administrator', 'admin', 'Maintenance Engineer', 'maint_eng']);
   const [plans, setPlans] = useState([]);
   const [events, setEvents] = useState([]);
   const [assets, setAssets] = useState([]);
@@ -101,7 +102,15 @@ export default function PlansAndEventsPage() {
     <>
       <div className="bc">Home / Plans and events</div>
       <header className="hd"><div><h1>Plans and events</h1><p>Calibration plans define intervals/tolerances; events record measured outcomes.</p></div>
-        <div className="tb"><button className="btn" onClick={()=>setShowRecordModal(true)} disabled={assets.length===0}><CalendarCheck size={18}/><span>Record event</span></button><button className="btn o" onClick={()=>setShowPlanModal(true)} disabled={instrumentTypes.length===0}><Plus size={18}/><span>New plan</span></button><button className="btn o" onClick={handleExport}><Download size={18}/><span>Export</span></button></div>
+        <div className="tb">
+          {canManagePlansAndEvents && (
+            <>
+              <button className="btn" onClick={()=>setShowRecordModal(true)} disabled={assets.length===0}><CalendarCheck size={18}/><span>Record event</span></button>
+              <button className="btn o" onClick={()=>setShowPlanModal(true)} disabled={instrumentTypes.length===0}><Plus size={18}/><span>New plan</span></button>
+            </>
+          )}
+          <button className="btn o" onClick={handleExport}><Download size={18}/><span>Export</span></button>
+        </div>
       </header>
       <section className="g2">
         <div className="pn"><h2>Calibration plans <span>{plans.length} configured</span></h2>

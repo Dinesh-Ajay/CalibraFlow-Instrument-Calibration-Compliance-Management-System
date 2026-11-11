@@ -2,9 +2,12 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../services/api';
 import StatusBadge from '../components/StatusBadge';
+import { useAuth } from '../context/AuthContext';
 import { Plus, Download, Bell, Box, CheckCircle, Calendar, AlertTriangle, X } from 'lucide-react';
 
 export default function InstrumentsPage() {
+  const { hasRole } = useAuth();
+  const canAddInstrument = hasRole(['Administrator', 'admin', 'Maintenance Engineer', 'maint_eng']);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [assets, setAssets] = useState([]);
@@ -112,7 +115,9 @@ export default function InstrumentsPage() {
       <header className="hd">
         <div><h1>Instruments</h1><p>{assets.length.toLocaleString()} assets · filter by type and status</p></div>
         <div className="tb">
-          <button className="btn" onClick={() => setIsAddModalOpen(true)} disabled={instrumentTypes.length === 0}><Plus size={18}/><span>Add instrument</span></button>
+          {canAddInstrument && (
+            <button className="btn" onClick={() => setIsAddModalOpen(true)} disabled={instrumentTypes.length === 0}><Plus size={18}/><span>Add instrument</span></button>
+          )}
           <button className="btn o" onClick={handleExport}><Download size={18}/><span>Export</span></button>
         </div>
       </header>

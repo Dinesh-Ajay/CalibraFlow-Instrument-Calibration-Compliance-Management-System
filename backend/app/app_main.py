@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.middleware.request_id import RequestIDMiddleware
 from app.routers import alerts, assets, assistant, audit, auth, calibration, calibration_plans, certificates
-from app.routers import corrective_actions, dashboard, emergency_extensions, impact_assessments, instrument_types
+from app.routers import corrective_actions, dashboard, data_quality, emergency_extensions, impact_assessments, instrument_types
 from app.routers import production, suppliers, users, work_orders
 
 
@@ -69,6 +69,7 @@ for module in [
     impact_assessments,
     alerts,
     audit,
+    data_quality,
     dashboard,
     assistant,
     suppliers,

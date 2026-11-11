@@ -37,7 +37,7 @@ def record_event_endpoint(
 @router.get("/events", response_model=List[CalibrationEventOut])
 def list_calibration_events(
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_roles(["Administrator", "Quality Engineer", "Maintenance Engineer", "Production Planner", "admin", "quality_eng", "maint_eng", "planner"])),
     asset_id: Optional[int] = None,
     result: Optional[str] = None,
     limit: int = Query(default=100, ge=1, le=1000),
@@ -59,7 +59,11 @@ def list_calibration_events(
 
 
 @router.get("/events/{event_id}", response_model=CalibrationEventOut)
-def get_calibration_event(event_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def get_calibration_event(
+    event_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_roles(["Administrator", "Quality Engineer", "Maintenance Engineer", "Production Planner", "admin", "quality_eng", "maint_eng", "planner"])),
+):
     event = db.query(CalibrationEvent).filter(CalibrationEvent.id == event_id).first()
     if not event:
         raise HTTPException(status_code=404, detail="Calibration event not found")

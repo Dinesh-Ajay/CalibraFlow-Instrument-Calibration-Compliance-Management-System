@@ -14,7 +14,7 @@ router = APIRouter(prefix="/audit", tags=["Audit Log"])
 @router.get("", response_model=List[AuditRecordOut])
 def list_audit_records(
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_roles(["Administrator", "Quality Engineer", "Production Planner", "admin", "quality_eng", "planner"])),
+    current_user: User = Depends(require_roles(["Administrator", "Quality Engineer", "admin", "quality_eng"])),
     entity_type: Optional[str] = None,
     action: Optional[str] = None,
     actor_id: Optional[int] = None,

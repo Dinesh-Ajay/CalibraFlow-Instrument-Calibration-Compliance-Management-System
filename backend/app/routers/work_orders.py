@@ -39,7 +39,7 @@ def create_work_order_endpoint(
 @router.get("", response_model=List[WorkOrderOut])
 def list_work_orders(
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_roles(["Administrator", "Quality Engineer", "Maintenance Engineer", "Production Planner", "admin", "quality_eng", "maint_eng", "planner"])),
     status: Optional[str] = None,
     priority: Optional[str] = None,
     asset_id: Optional[int] = None,
@@ -65,7 +65,11 @@ def list_work_orders(
 
 
 @router.get("/{work_order_id}", response_model=WorkOrderOut)
-def get_work_order(work_order_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def get_work_order(
+    work_order_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(require_roles(["Administrator", "Quality Engineer", "Maintenance Engineer", "Production Planner", "admin", "quality_eng", "maint_eng", "planner"])),
+):
     wo = db.query(WorkOrder).filter(WorkOrder.id == work_order_id).first()
     if not wo:
         raise HTTPException(status_code=404, detail="Work order not found")
