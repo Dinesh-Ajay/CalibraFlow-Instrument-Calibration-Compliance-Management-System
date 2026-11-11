@@ -1,0 +1,6 @@
+id,supplier_code,supplier_name,contact_email,contact_phone,address,accreditation_reference,status,created_at
+1,SUP-0001,"Gomez, Campbell and Thompson Calibration Services",service@sup-0001.com,+1-800-796-6777,"USNS Hall, FPO AE 94042",ISO-17025-ACC-2025-001,ACTIVE,2026-01-01T00:00:00+00:00
+2,SUP-0002,"Anderson, Gonzalez and Parker Calibration Services",service@sup-0002.com,+1-800-693-5635,"328 Jay Mission, New Dannyberg, OR 46075",ISO-17025-ACC-2026-002,ACTIVE,2026-01-01T00:00:00+00:00
+3,SUP-0003,Brown-Bass Calibration Services,service@sup-0003.com,+1-800-974-3827,"19388 Davis Fall Suite 961, Bryantton, DC 51092",ISO-17025-ACC-2024-003,ACTIVE,2026-01-01T00:00:00+00:00
+4,SUP-0004,"Clark, Brown and Jones Calibration Services",service@sup-0004.com,+1-800-149-4958,"11639 Mendoza Club, West Blakeshire, MS 01200",ISO-17025-ACC-2025-004,ACTIVE,2026-01-01T00:00:00+00:00
+5,SUP-0005,"Castillo, Young and Johnson Calibration Services",service@sup-0005.com,+1-800-335-4843,"885 Mercedes Mountain Apt. 104, North Jessicatown, MS 67862",ISO-17025-ACC-2026-005,ACTIVE,2026-01-01T00:00:00+00:00

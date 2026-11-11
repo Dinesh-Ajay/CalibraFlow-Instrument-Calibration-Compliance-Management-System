@@ -1,0 +1,68 @@
+{
+  "validation_timestamp": "2026-11-11T13:08:41.802747Z",
+  "total_records_evaluated": 284,
+  "foreign_key_violations": 0,
+  "data_errors": [],
+  "failed_calibrations_count": 5,
+  "blocked_production_usages_count": 24,
+  "missing_impact_assessments_count": 1,
+  "detected_anomalies_count": 9,
+  "intentional_ground_truth_matches": 4,
+  "detected_anomalies": [
+    {
+      "record_id": "AST-000005",
+      "issue_type": "DUE_DATE_MISMATCH",
+      "intentional": true,
+      "details": "Interval days is 365, but gap between last_calibration and next_due is 196 days."
+    },
+    {
+      "record_id": "AST-000007",
+      "issue_type": "DUE_DATE_MISMATCH",
+      "intentional": false,
+      "details": "Interval days is 180, but gap between last_calibration and next_due is 242 days."
+    },
+    {
+      "record_id": "AST-000010",
+      "issue_type": "DUE_DATE_MISMATCH",
+      "intentional": false,
+      "details": "Interval days is 180, but gap between last_calibration and next_due is 226 days."
+    },
+    {
+      "record_id": "AST-000014",
+      "issue_type": "DUE_DATE_MISMATCH",
+      "intentional": false,
+      "details": "Interval days is 365, but gap between last_calibration and next_due is 149 days."
+    },
+    {
+      "record_id": "AST-000015",
+      "issue_type": "DUE_DATE_MISMATCH",
+      "intentional": false,
+      "details": "Interval days is 365, but gap between last_calibration and next_due is 230 days."
+    },
+    {
+      "record_id": "AST-000020",
+      "issue_type": "DUE_DATE_MISMATCH",
+      "intentional": false,
+      "details": "Interval days is 90, but gap between last_calibration and next_due is 222 days."
+    },
+    {
+      "record_id": "CERT-CAL-AST-000003-2026-000003",
+      "issue_type": "ASSET_MISMATCH",
+      "intentional": true,
+      "details": "Certificate asset_id=2 does not match CalibrationEvent asset_id=3."
+    },
+    {
+      "record_id": "CAL-AST-000004-2026-000004",
+      "issue_type": "MISSING_IMPACT_ASSESSMENT",
+      "intentional": true,
+      "details": "Failed calibration CAL-AST-000004-2026-000004 has no linked impact assessment."
+    },
+    {
+      "record_id": "USE-AST-000007-20261115120000-0002",
+      "issue_type": "EXPIRED_USAGE",
+      "intentional": true,
+      "details": "Calibration expired on 2026-11-03. No approved emergency extension exists."
+    }
+  ],
+  "validation_passed": true
+}

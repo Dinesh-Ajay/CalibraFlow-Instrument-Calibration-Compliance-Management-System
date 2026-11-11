@@ -1,0 +1,6 @@
+id,corrective_action_code,calibration_event_id,asset_id,description,assigned_to,root_cause,action_taken,status,opened_at,closed_at
+1,CAPA-000001,4,4,Measurement error 3.2657% exceeded tolerance 2.0%. Instrument quarantined.,1,Component drift over operating temperature range.,Replaced sensor module and scheduled recalibration.,OPEN,2026-05-26T00:00:00+00:00,
+2,CAPA-000002,12,12,Measurement error 1.8308% exceeded tolerance 1.0%. Instrument quarantined.,1,Component drift over operating temperature range.,Replaced sensor module and scheduled recalibration.,RESOLVED,2026-08-17T00:00:00+00:00,
+3,CAPA-000003,24,4,Measurement error 2.7188% exceeded tolerance 2.0%. Instrument quarantined.,1,Component drift over operating temperature range.,Replaced sensor module and scheduled recalibration.,OPEN,2026-05-12T00:00:00+00:00,2026-05-17T00:00:00+00:00
+4,CAPA-000004,36,16,Measurement error 3.0375% exceeded tolerance 1.0%. Instrument quarantined.,1,Component drift over operating temperature range.,Replaced sensor module and scheduled recalibration.,RESOLVED,2026-06-12T00:00:00+00:00,
+5,CAPA-000005,48,8,Measurement error 2.6276% exceeded tolerance 2.0%. Instrument quarantined.,1,Component drift over operating temperature range.,Replaced sensor module and scheduled recalibration.,OPEN,2026-05-31T00:00:00+00:00,2026-06-05T00:00:00+00:00

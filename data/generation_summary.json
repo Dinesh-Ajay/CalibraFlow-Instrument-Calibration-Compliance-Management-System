@@ -1,0 +1,21 @@
+{
+  "seed": 20261022,
+  "scale": "starter",
+  "generated_at": "2026-11-11T07:26:17.497547+00:00",
+  "counts": {
+    "instrument_types": 7,
+    "suppliers": 5,
+    "assets": 20,
+    "calibration_plans": 20,
+    "calibration_events": 50,
+    "certificates": 45,
+    "work_orders": 40,
+    "emergency_extensions": 2,
+    "production_uses": 100,
+    "alerts": 14,
+    "corrective_actions": 5,
+    "impact_assessments": 4,
+    "audit_records": 20,
+    "ground_truth_anomalies": 4
+  }
+}

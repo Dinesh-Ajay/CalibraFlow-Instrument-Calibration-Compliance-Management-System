@@ -1,0 +1,5 @@
+id,assessment_code,calibration_event_id,asset_id,affected_production_start,affected_production_end,affected_usage_count,risk_level,assessment_notes,assessed_by,status,created_at
+1,IA-000001,12,12,2026-07-18T00:00:00+00:00,2026-08-17T00:00:00+00:00,23,HIGH,Assessed product batches manufactured within tolerance window; QA risk disposition acceptable.,1,PENDING,2026-08-17T00:00:00+00:00
+2,IA-000002,24,4,2026-04-12T00:00:00+00:00,2026-05-12T00:00:00+00:00,7,MEDIUM,Assessed product batches manufactured within tolerance window; QA risk disposition acceptable.,1,PENDING,2026-05-12T00:00:00+00:00
+3,IA-000003,36,16,2026-05-13T00:00:00+00:00,2026-06-12T00:00:00+00:00,11,HIGH,Assessed product batches manufactured within tolerance window; QA risk disposition acceptable.,1,COMPLETED,2026-06-12T00:00:00+00:00
+4,IA-000004,48,8,2026-05-01T00:00:00+00:00,2026-05-31T00:00:00+00:00,10,MEDIUM,Assessed product batches manufactured within tolerance window; QA risk disposition acceptable.,1,COMPLETED,2026-05-31T00:00:00+00:00

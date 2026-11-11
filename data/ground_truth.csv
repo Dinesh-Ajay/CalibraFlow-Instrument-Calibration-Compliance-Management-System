@@ -1,0 +1,5 @@
+record_id,entity_type,issue_type,expected_decision,expected_status,expected_action,explanation
+AST-000005,Asset,DUE_DATE_MISMATCH,FLAG,INCONSISTENT,RECALCULATE_DUE_DATE,Calculated next due date (2027-06-16) does not match plan formula last_calibration_date + 365 days (2027-05-02).
+CERT-CAL-AST-000003-2026-000003,Certificate,ASSET_MISMATCH,INVALID,INVALID,REJECT_AND_ALERT,Certificate asset_id (2) does not match calibration event asset_id (3).
+CAL-AST-000004-2026-000004,CalibrationEvent,MISSING_IMPACT_ASSESSMENT,NON_COMPLIANT,FLAGGED,CREATE_IMPACT_ASSESSMENT,Failed calibration event CAL-AST-000004-2026-000004 has no linked impact assessment record.
+USE-AST-000007-20261115120000-0002,ProductionUse,EXPIRED_USAGE,BLOCKED,BLOCKED,BLOCK_AND_ALERT,Production usage recorded on 2026-11-15 after calibration due date 2026-11-03 without approved extension.
